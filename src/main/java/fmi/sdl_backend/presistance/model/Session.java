@@ -10,6 +10,8 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +24,7 @@ public class Session {
     private UUID id;
 
     @NotNull
-    @Size(min = 1, max = 255, message = "Interview name must be between 1 and 255 characters")
+    @Size(min = 1, max = 255, message = "Session name must be between 1 and 255 characters")
     @Column(nullable = false)
     private String name;
 
@@ -50,4 +52,7 @@ public class Session {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Cycle> cycles = new ArrayList<>();
 }
