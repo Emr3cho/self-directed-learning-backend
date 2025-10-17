@@ -2,6 +2,7 @@ package fmi.sdl_backend.rest.endpoint;
 
 import fmi.sdl_backend.presistance.model.User;
 import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponse;
+import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponseWithDetails;
 import fmi.sdl_backend.service.PdfService;
 import fmi.sdl_backend.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,6 +58,11 @@ public class PdfController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{documentId}")
+    public ResponseEntity<UploadedPdfResponseWithDetails> getDocumentDetails(@PathVariable UUID documentId) {
+        return ResponseEntity.ok(pdfService.getDocumentDetails(documentId));
+    }
+
 
     @Operation(
             summary = "List all PDF documents",
@@ -79,31 +85,6 @@ public class PdfController {
         List<UploadedPdfResponse> docs = pdfService.getAllDocuments();
         return ResponseEntity.ok(docs);
     }
-
-
-    @Operation(
-            summary = "Update document title",
-            description = "Updates the secondary filename (title) of an existing PDF document. Only the title field is modified, leaving other document properties unchanged."
-    )
-    @PatchMapping("/{documentId}")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Document title updated successfully",
-                    content = @Content(schema = @Schema(implementation = UploadedPdfResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid document ID or title parameter",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Document not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    public ResponseEntity<UploadedPdfResponse> modifySecondaryFilename(
-            @Parameter(description = "Unique identifier of the document to update", required = true)
-            @PathVariable @NotNull UUID documentId,
-
-            @Parameter(description = "New title for the document", required = true)
-            @RequestParam @NotBlank String title) {
-
-        return ResponseEntity.ok(pdfService.changeDocumentSecondaryFilename(documentId, title));
-    }
-
 
     @Operation(
             summary = "Delete PDF document",

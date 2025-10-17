@@ -8,6 +8,7 @@ import fmi.sdl_backend.presistance.model.Subsection;
 import fmi.sdl_backend.presistance.repository.PdfRepository;
 import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponse;
 import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponseWithConcatenatedContent;
+import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponseWithDetails;
 import fmi.sdl_backend.service.PdfService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -72,25 +73,9 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public UploadedPdfResponseWithConcatenatedContent getConcatenatedContentById(UUID documentId, String subsectionTitle) {
-        log.info("Retrieving concatenated content for document ID: {} and subsection: {}", documentId, subsectionTitle);
-
-        Document document = this.findDocumentByIdOrThrow(documentId);
-        Subsection chosenSubsection = this.findSubsectionByTitleInDocument(document.getSubsections(), subsectionTitle);
-        StringBuilder allContent = new StringBuilder(chosenSubsection.getContent());
-        collectAllSubsectionContent(chosenSubsection.getChildren(), allContent);
-        return new UploadedPdfResponseWithConcatenatedContent(subsectionTitle, allContent.toString());
-    }
-
-    @Override
-    public UploadedPdfResponse changeDocumentSecondaryFilename(UUID documentId, String newTitle) {
-        log.info("Updating secondary filename for document ID: {} to: {}", documentId, newTitle);
-
-        Document document = this.findDocumentByIdOrThrow(documentId);
-        document.setSecondaryFileName(newTitle);
-        pdfRepository.save(document);
-
-        return pdfMapper.toUploadedPdfResponse(document);
+    public UploadedPdfResponseWithDetails getDocumentDetails(UUID documentId) {
+        Optional<Document> document = pdfRepository.findDocumentWithTopLevelSubsections(documentId);
+        return pdfMapper.toUploadedPdfResponseWithDetails(document.get());
     }
 
     @Override
