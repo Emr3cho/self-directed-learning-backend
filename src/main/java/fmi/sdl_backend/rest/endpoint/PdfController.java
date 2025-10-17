@@ -58,9 +58,38 @@ public class PdfController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Get document details",
+            description = "Retrieves detailed information about a specific PDF document including its subsection hierarchy. This includes all root-level subsections and their nested children."
+    )
     @GetMapping("/{documentId}")
-    public ResponseEntity<UploadedPdfResponseWithDetails> getDocumentDetails(@PathVariable UUID documentId) {
-        return ResponseEntity.ok(pdfService.getDocumentDetails(documentId));
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Document details retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = UploadedPdfResponseWithDetails.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid document ID format",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Document not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    public ResponseEntity<UploadedPdfResponseWithDetails> getDocumentDetails(
+            @Parameter(
+                    description = "Unique identifier of the document to retrieve",
+                    required = true,
+                    example = "123e4567-e89b-12d3-a456-426614174000"
+            )
+            @PathVariable @NotNull UUID documentId
+    ) {
+        UploadedPdfResponseWithDetails response = pdfService.getDocumentDetails(documentId);
+        return ResponseEntity.ok(response);
     }
 
 

@@ -2,7 +2,9 @@ package fmi.sdl_backend.presistance.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "subsection")
 public class Subsection {
@@ -44,6 +48,10 @@ public class Subsection {
 
     @Column(nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    public Subsection(UUID id) {
+        this.id = id;
+    }
 
     public String getSubsectionInfo(){
         StringBuilder sb = new StringBuilder();

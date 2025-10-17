@@ -3,7 +3,7 @@
 -- Description: Initial database schema for SDL Backend application
 
 -- Create custom ENUM types
-CREATE TYPE session_status AS ENUM ('ACTIVE', 'INACTIVE');
+CREATE TYPE status AS ENUM ('COMPLETED', 'NOT_COMPLETED');
 
 -- Create users table
 CREATE TABLE users
@@ -49,14 +49,15 @@ CREATE TABLE subsection
 -- Create session table
 CREATE TABLE session
 (
-    id                 UUID PRIMARY KEY        DEFAULT gen_random_uuid(),
-    name               VARCHAR(255)   NOT NULL,
+    id                 UUID PRIMARY KEY      DEFAULT gen_random_uuid(),
+    name               VARCHAR(255) NOT NULL,
     description        TEXT,
-    status             session_status NOT NULL DEFAULT 'ACTIVE',
+    status             status       NOT NULL DEFAULT 'NOT_COMPLETED',
+    review             TEXT,
     start_time         TIMESTAMP WITH TIME ZONE,
     end_time           TIMESTAMP WITH TIME ZONE,
-    document_id        UUID           NOT NULL,
-    created_by_user_id UUID           NOT NULL,
+    document_id        UUID         NOT NULL,
+    created_by_user_id UUID         NOT NULL,
     CONSTRAINT fk_session_document FOREIGN KEY (document_id)
         REFERENCES document (id) ON DELETE RESTRICT,
     CONSTRAINT fk_session_user FOREIGN KEY (created_by_user_id)
@@ -70,7 +71,9 @@ CREATE TABLE cycle
     session_id  UUID                     NOT NULL,
     review      TEXT,
     cycle_order INTEGER                  NOT NULL,
+    status      status                   NOT NULL DEFAULT 'NOT_COMPLETED',
     created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP WITH TIME ZONE,
     CONSTRAINT fk_cycle_session FOREIGN KEY (session_id)
         REFERENCES session (id) ON DELETE CASCADE
 );

@@ -1,6 +1,6 @@
 package fmi.sdl_backend.presistance.model;
 
-import fmi.sdl_backend.presistance.model.enums.SessionStatus;
+import fmi.sdl_backend.presistance.model.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,13 +35,16 @@ public class Session {
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false, columnDefinition = "session_status")
-    private SessionStatus status = SessionStatus.ACTIVE;
+    private Status status = Status.NOT_COMPLETED;
 
     @Column(name = "start_time")
     private OffsetDateTime startTime;
 
     @Column(name = "end_time")
     private OffsetDateTime endTime;
+
+    @Column(columnDefinition = "TEXT")
+    private String review;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

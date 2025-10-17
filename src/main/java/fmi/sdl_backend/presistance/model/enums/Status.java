@@ -1,6 +1,6 @@
 package fmi.sdl_backend.presistance.model.enums;
 
-public enum SessionStatus {
+public enum Status {
     COMPLETED,
     NOT_COMPLETED
 }
