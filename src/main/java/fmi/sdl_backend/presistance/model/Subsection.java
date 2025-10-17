@@ -9,7 +9,9 @@ import lombok.Setter;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -34,6 +36,9 @@ public class Subsection {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty("subsections")
     private List<Subsection> children = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "subsections", fetch = FetchType.LAZY)
+    private Set<Session> sessions = new HashSet<>();
 
     private String title;
 

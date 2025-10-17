@@ -64,6 +64,18 @@ CREATE TABLE session
         REFERENCES users (id) ON DELETE RESTRICT
 );
 
+-- Create session_subsection junction table for many-to-many relationship
+CREATE TABLE session_subsection
+(
+    session_id    UUID NOT NULL,
+    subsection_id UUID NOT NULL,
+    PRIMARY KEY (session_id, subsection_id),
+    CONSTRAINT fk_session_subsection_session FOREIGN KEY (session_id)
+        REFERENCES session (id) ON DELETE CASCADE,
+    CONSTRAINT fk_session_subsection_subsection FOREIGN KEY (subsection_id)
+        REFERENCES subsection (id) ON DELETE CASCADE
+);
+
 -- Create cycle table
 CREATE TABLE cycle
 (
@@ -82,7 +94,7 @@ CREATE TABLE cycle
 CREATE TABLE question
 (
     id                                    UUID PRIMARY KEY                  DEFAULT gen_random_uuid(),
-    session_id                            UUID                     NOT NULL,
+    cycle_id                              UUID                     NOT NULL,
     question_text                         TEXT                     NOT NULL,
     option_a                              TEXT                     NOT NULL,
     option_b                              TEXT                     NOT NULL,
@@ -96,15 +108,26 @@ CREATE TABLE question
     answered_at                           TIMESTAMP WITH TIME ZONE,
     created_at                            TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at                            TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_question_session FOREIGN KEY (session_id)
-        REFERENCES session (id) ON DELETE CASCADE
+    CONSTRAINT fk_question_cycle FOREIGN KEY (cycle_id)
+        REFERENCES cycle (id) ON DELETE CASCADE
 );
+
+-- Create indexes for better query performance
+CREATE INDEX idx_session_subsection_session ON session_subsection(session_id);
+CREATE INDEX idx_session_subsection_subsection ON session_subsection(subsection_id);
+CREATE INDEX idx_subsection_document ON subsection(document_id);
+CREATE INDEX idx_subsection_parent ON subsection(parent_id);
+CREATE INDEX idx_session_document ON session(document_id);
+CREATE INDEX idx_session_user ON session(created_by_user_id);
+CREATE INDEX idx_cycle_session ON cycle(session_id);
+CREATE INDEX idx_question_cycle ON question(cycle_id);
 
 -- Add comments to tables for documentation
 COMMENT ON TABLE users IS 'Stores user account information with soft delete support';
 COMMENT ON TABLE document IS 'Stores uploaded PDF documents metadata';
 COMMENT ON TABLE subsection IS 'Stores hierarchical document sections and subsections';
 COMMENT ON TABLE session IS 'Stores interview session information';
+COMMENT ON TABLE session_subsection IS 'Junction table for many-to-many relationship between sessions and subsections';
 COMMENT ON TABLE cycle IS 'Stores interview cycles within a session';
 COMMENT ON TABLE question IS 'Stores interview questions and answers';
 

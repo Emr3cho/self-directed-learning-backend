@@ -1,23 +1,34 @@
 package fmi.sdl_backend.service.impl;
 
+import fmi.sdl_backend.mapper.SessionMapper;
 import fmi.sdl_backend.presistance.model.Session;
 import fmi.sdl_backend.presistance.model.Subsection;
 import fmi.sdl_backend.presistance.model.enums.Status;
+import fmi.sdl_backend.presistance.repository.SessionRepository;
 import fmi.sdl_backend.rest.request.session.SessionCreateRequest;
 import fmi.sdl_backend.service.SessionService;
+import fmi.sdl_backend.utils.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
+
+    private final SessionMapper sessionMapper;
+    private final SessionRepository sessionRepository;
+
     @Override
     public void createSession(SessionCreateRequest request) {
         List<Subsection> subsections = request.getSubsectionIds().stream().map(Subsection::new).toList();
-        Session session = new Session();
-
-
+        Session session = sessionMapper.toSession(request, subsections);
+        session.setCreatedBy(SecurityUtils.getCurrentUser());
+        session.setStartTime(OffsetDateTime.now());
+        sessionRepository.save(session);
     }
 
     @Override
