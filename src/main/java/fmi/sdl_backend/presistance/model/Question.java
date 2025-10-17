@@ -25,8 +25,8 @@ public class Question {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "session_id", nullable = false)
-    private Session session;
+    @JoinColumn(name = "cycle_id", nullable = false)
+    private Cycle cycle;
 
     @NotNull
     @Size(min = 10, message = "Question text must be at least 10 characters")

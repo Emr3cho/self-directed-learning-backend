@@ -22,7 +22,7 @@ public class User extends SoftDeletable {
     private String firstName;
     private String lastName;
     private String email;
-    
+
     @CreationTimestamp
     private OffsetDateTime createdAt;
 
@@ -30,5 +30,9 @@ public class User extends SoftDeletable {
         this.email = email;
         this.firstName = fullName.split(" ")[0];
         this.lastName = fullName.split(" ")[1];
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

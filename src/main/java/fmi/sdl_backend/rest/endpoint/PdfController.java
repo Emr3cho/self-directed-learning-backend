@@ -1,7 +1,9 @@
 package fmi.sdl_backend.rest.endpoint;
 
+import fmi.sdl_backend.presistance.model.User;
 import fmi.sdl_backend.rest.response.pdf.UploadedPdfResponse;
 import fmi.sdl_backend.service.PdfService;
+import fmi.sdl_backend.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

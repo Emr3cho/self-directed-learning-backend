@@ -1,18 +1,16 @@
 package fmi.sdl_backend.security;
 
+import fmi.sdl_backend.presistance.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Function;
 
 @Component
 public class JwtService {
@@ -32,14 +30,17 @@ public class JwtService {
                 .getPayload();
     }
 
-    public String getEmailFromToken(String token) {
+    public User getUserFromToken(String token) {
         Claims claims = decodeToken(token);
-        return claims.get("email", String.class);
+        String email = claims.get("email", String.class);
+        String fullName = claims.get("name", String.class);
+
+        return new User(email, fullName);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String userName = getEmailFromToken(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String userName = getUserFromToken(token).getEmail();
+        return !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

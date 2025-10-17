@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SdlUserDetailsService implements UserDetailsService {
 
@@ -17,19 +19,11 @@ public class SdlUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // TODO: 1. Search for that user by email
-        // TODO: 2. If not found create new user and seve
-        // TODO: 3. Return that object as UserDetails
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            String message = "Email " + email + " not found";
-            throw new UsernameNotFoundException(message);
-        } else if (user.isDeleted()) {
-            String message = "Email '" + email + "' was found but account is deleted!";
-            throw new UsernameNotFoundException(message);
-        }
-
-        return new SdlUserDetails(user);
+    public UserDetails loadUserByUsername(String concatenatedEmailAndFullName) throws UsernameNotFoundException {
+        String email = concatenatedEmailAndFullName.split("---")[0];
+        String fullName = concatenatedEmailAndFullName.split("---")[1];
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) user = Optional.of(userRepository.save(new User(email, fullName)));
+        return new SdlUserDetails(user.get());
     }
 }
