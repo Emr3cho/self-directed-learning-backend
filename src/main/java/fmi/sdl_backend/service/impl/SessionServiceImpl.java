@@ -6,6 +6,7 @@ import fmi.sdl_backend.presistance.model.Subsection;
 import fmi.sdl_backend.presistance.model.enums.Status;
 import fmi.sdl_backend.presistance.repository.SessionRepository;
 import fmi.sdl_backend.rest.request.session.SessionCreateRequest;
+import fmi.sdl_backend.rest.response.session.SessionResponse;
 import fmi.sdl_backend.service.SessionService;
 import fmi.sdl_backend.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,13 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public void createSession(SessionCreateRequest request) {
+    public SessionResponse createSession(SessionCreateRequest request) {
         List<Subsection> subsections = request.getSubsectionIds().stream().map(Subsection::new).toList();
         Session session = sessionMapper.toSession(request, subsections);
         session.setCreatedBy(SecurityUtils.getCurrentUser());
         session.setStartTime(OffsetDateTime.now());
-        sessionRepository.save(session);
+        Session savedEntity = sessionRepository.save(session);
+        return new SessionResponse(savedEntity.getId(), savedEntity.getName());
     }
 
     @Override

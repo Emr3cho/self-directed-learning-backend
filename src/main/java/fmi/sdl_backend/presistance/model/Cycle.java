@@ -32,6 +32,8 @@ public class Cycle {
     @Column(columnDefinition = "TEXT")
     private String review;
 
+    private String title;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)

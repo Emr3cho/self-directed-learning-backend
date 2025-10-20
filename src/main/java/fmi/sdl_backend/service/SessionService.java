@@ -3,12 +3,13 @@ package fmi.sdl_backend.service;
 import fmi.sdl_backend.presistance.model.Session;
 import fmi.sdl_backend.presistance.model.enums.Status;
 import fmi.sdl_backend.rest.request.session.SessionCreateRequest;
+import fmi.sdl_backend.rest.response.session.SessionResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface SessionService {
-    void createSession(SessionCreateRequest request);
+    SessionResponse createSession(SessionCreateRequest request);
     Session findSessionByIdOrThrow(UUID sessionId);
     List<Session> getAllUserSessions();
     void updateSessionStatus(UUID sessionId, Status status);

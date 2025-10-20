@@ -2,6 +2,7 @@ package fmi.sdl_backend.rest.endpoint;
 
 import fmi.sdl_backend.presistance.model.enums.Status;
 import fmi.sdl_backend.rest.request.session.SessionCreateRequest;
+import fmi.sdl_backend.rest.response.session.SessionResponse;
 import fmi.sdl_backend.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -53,12 +55,12 @@ public class SessionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    public ResponseEntity<Void> createSession(
+    public ResponseEntity<SessionResponse> createSession(
             @Parameter(description = "Session creation request containing name, document ID, and optional subsection IDs", required = true)
             @Valid @RequestBody SessionCreateRequest request
     ) {
-        sessionService.createSession(request);
-        return ResponseEntity.noContent().build();
+        SessionResponse sessionResponse = sessionService.createSession(request);
+        return new ResponseEntity<>(sessionResponse, HttpStatus.CREATED);
     }
 
     @Operation(

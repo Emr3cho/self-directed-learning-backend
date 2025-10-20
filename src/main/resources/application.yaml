@@ -1,11 +1,11 @@
 spring:
-#  ai:
-#    openai:
-#      api-key: "test"
-#      chat:
-#        completions-path: "/chat/completions"
-#    mistralai:
-#      api-key: "test"
+  ai:
+    openai:
+      api-key: "test"
+      chat:
+        completions-path: "/chat/completions"
+    mistralai:
+      api-key: "obi6Nvq4Gmb7Qk70fEyoWbqN4S40tIvP"
   servlet:
     multipart:
       max-file-size: 50MB
@@ -17,12 +17,6 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
-
-#ai:
-#  client_factory: mistral_client_factory
-#  api-key: ${AI_API_KEY}
-#  model: {$AI_MODEL}
-#  base-url: {$AI_BASE_URL}
 
 external-services:
   document-parser-base-url: http://127.0.0.1:8000

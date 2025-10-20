@@ -1,4 +1,4 @@
-package fmi.sdl_backend.rest.response.interview.question;
+package fmi.sdl_backend.rest.response;
 
 import lombok.Getter;
 import lombok.Setter;
